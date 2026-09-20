@@ -1,0 +1,54 @@
+{
+  "name": "pictostl-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for pictostl.com image-to-3D generation",
+  "homepage": "https://pictostl.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qduoduo-hwh/pictostl-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/qduoduo-hwh/pictostl-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "pictostl",
+    "image-to-3d",
+    "stl",
+    "glb"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "pictostl-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test test/*.test.ts",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm test && npm run build"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1",
+    "three": "^0.186.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/three": "^0.186.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.2"
+  }
+}
