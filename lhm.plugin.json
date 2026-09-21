@@ -1,8 +1,8 @@
 {
-  "author": "qduoduo-hwh",
-  "authorUrl": "https://github.com/qduoduo-hwh",
+  "author": "PicToSTL",
+  "authorUrl": "https://pictostl.com/",
   "description": "MCP server for pictostl.com image-to-3D generation",
-  "homepage": "https://pictostl.com",
+  "homepage": "https://pictostl.com/",
   "identifier": "qduoduo-hwh-pictostl-mcp",
   "name": "PicToSTL",
   "prompts": [],
