@@ -30,7 +30,7 @@ Website browser generation is separate from MCP. MCP always uses an API key.
 
 ## Install from GitHub
 
-Requires Node.js 20 or newer. The command below installs the repository through npm's Git support and builds the TypeScript server locally during installation. It does not require a published npm package.
+Requires Node.js 20 or newer. The command below installs the repository through npm's Git support and runs its committed JavaScript build. It does not require a published npm package or a local TypeScript compiler.
 
 ## Claude / Cursor config
 
