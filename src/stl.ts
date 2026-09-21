@@ -24,6 +24,16 @@ export async function glbToBinaryStl(
   glb: Uint8Array,
   longestEdgeMm = DEFAULT_LONGEST_EDGE_MM,
 ): Promise<Uint8Array> {
+  // GLTFLoader uses the Web Worker global `self` when resolving embedded
+  // textures. Node exposes the required URL/Blob APIs on globalThis, but does
+  // not define that alias. STL export ignores textures, so this compatibility
+  // alias is sufficient and lets textured GLBs load without a browser DOM.
+  if (!('self' in globalThis)) {
+    Object.defineProperty(globalThis, 'self', {
+      value: globalThis,
+      configurable: true,
+    });
+  }
   const size = normalizeLongestEdgeMm(longestEdgeMm);
   const loader = new GLTFLoader();
   loader.setMeshoptDecoder(MeshoptDecoder);

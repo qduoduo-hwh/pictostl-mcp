@@ -20,19 +20,59 @@ test('fixture GLB has the glTF magic', () => {
   assert.equal(String.fromCharCode(...glb.subarray(0, 4)), 'glTF');
 });
 
+test('converts a GLB with an embedded texture in Node.js', async () => {
+  const originalSelf = Object.getOwnPropertyDescriptor(globalThis, 'self');
+  Reflect.deleteProperty(globalThis, 'self');
+  const originalError = console.error;
+  console.error = () => {};
+  try {
+    const stl = await glbToBinaryStl(triangleGlb(true), 100);
+    assert.equal(
+      new DataView(stl.buffer, stl.byteOffset, stl.byteLength).getUint32(80, true),
+      1,
+    );
+  } finally {
+    console.error = originalError;
+    if (originalSelf) {
+      Object.defineProperty(globalThis, 'self', originalSelf);
+    } else {
+      Reflect.deleteProperty(globalThis, 'self');
+    }
+  }
+});
+
 /** Right triangle with bbox 2 × 1 × 0 so the longest edge is 2. */
-function triangleGlb() {
+function triangleGlb(withTexture = false) {
   const positions = new Float32Array([0, 0, 0, 2, 0, 0, 0, 1, 0]);
   const indices = new Uint16Array([0, 1, 2]);
-  const bin = new Uint8Array(44);
+  const png = withTexture
+    ? Uint8Array.from(
+        Buffer.from(
+          'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=',
+          'base64',
+        ),
+      )
+    : new Uint8Array();
+  const bin = new Uint8Array(44 + png.byteLength);
   bin.set(new Uint8Array(positions.buffer), 0);
   bin.set(new Uint8Array(indices.buffer), 36);
-  const json = JSON.stringify({
+  bin.set(png, 44);
+  const document: Record<string, unknown> = {
     asset: { version: '2.0' },
     scene: 0,
     scenes: [{ nodes: [0] }],
     nodes: [{ mesh: 0 }],
-    meshes: [{ primitives: [{ attributes: { POSITION: 0 }, indices: 1 }] }],
+    meshes: [
+      {
+        primitives: [
+          {
+            attributes: { POSITION: 0 },
+            indices: 1,
+            ...(withTexture ? { material: 0 } : {}),
+          },
+        ],
+      },
+    ],
     accessors: [
       {
         bufferView: 0,
@@ -48,8 +88,21 @@ function triangleGlb() {
       { buffer: 0, byteOffset: 0, byteLength: 36, target: 34962 },
       { buffer: 0, byteOffset: 36, byteLength: 6, target: 34963 },
     ],
-    buffers: [{ byteLength: 44 }],
-  });
+    buffers: [{ byteLength: bin.byteLength }],
+  };
+  if (withTexture) {
+    (document.bufferViews as Array<Record<string, unknown>>).push({
+      buffer: 0,
+      byteOffset: 44,
+      byteLength: png.byteLength,
+    });
+    document.images = [{ bufferView: 2, mimeType: 'image/png' }];
+    document.textures = [{ source: 0 }];
+    document.materials = [
+      { pbrMetallicRoughness: { baseColorTexture: { index: 0 } } },
+    ];
+  }
+  const json = JSON.stringify(document);
   const jsonBytes = pad4(new TextEncoder().encode(json), 0x20);
   const binBytes = pad4(bin, 0);
   const total = 12 + 8 + jsonBytes.byteLength + 8 + binBytes.byteLength;

@@ -6,6 +6,18 @@ Results are AI-reconstructed meshes for visualization and 3D printing experiment
 
 This package is a **local stdio** MCP client (`npx -y pictostl-mcp`). pictostl.com does not host a remote MCP HTTP endpoint.
 
+## Architecture and data flow
+
+```text
+MCP client → local pictostl-mcp process → pictostl.com API
+                                      ← generation status and GLB
+MCP client ← local GLB/STL file       ←
+```
+
+The MCP process runs locally and communicates with `https://pictostl.com` over HTTPS. Images, generation parameters, and the API key are sent to pictostl.com to upload inputs, create jobs, and retrieve results. GLB-to-STL conversion and final file writing happen locally on the machine running the MCP server.
+
+There is no hosted PicToSTL MCP endpoint. MCP clients start this package locally over `stdio`; the local process then calls the hosted PicToSTL API.
+
 ## Get an API key
 
 1. [Sign up](https://pictostl.com)
@@ -35,6 +47,8 @@ Website browser generation is separate from MCP. MCP always uses an API key.
 Set `PICTOSTL_API_KEY` to a live key from https://pictostl.com/settings/api-keys.
 
 Optional: `PICTOSTL_API_BASE` (default `https://pictostl.com`) for a local website.
+
+Keep the API key in your MCP client's secret or user-level configuration. Do not commit a live key to source control.
 
 `npx -y pictostl-mcp` works after this package is published to npm.
 
