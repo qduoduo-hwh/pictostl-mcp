@@ -20,6 +20,7 @@ test('README contains official links and local stdio notes', () => {
   assert.match(readme, /stdio/i);
   assert.match(readme, /not (an? )?(engineering|construction)/i);
   assert.match(readme, /PICTOSTL_API_KEY/);
-  assert.match(readme, /npx -y pictostl-mcp/);
+  assert.match(readme, /--package=github:qduoduo-hwh\/pictostl-mcp/);
+  assert.doesNotMatch(readme, /npx -y pictostl-mcp/);
   assert.doesNotMatch(readme, /\/mcp[^\w]/);
 });

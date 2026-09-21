@@ -26,17 +26,14 @@
   "files": [
     "dist",
     "README.md",
-    "server.json",
+    "lhm.plugin.json",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
     "test": "tsx --test test/*.test.ts",
     "start": "node dist/index.js",
-    "prepublishOnly": "npm test && npm run build"
-  },
-  "publishConfig": {
-    "access": "public"
+    "prepare": "npm run build"
   },
   "engines": {
     "node": ">=20"

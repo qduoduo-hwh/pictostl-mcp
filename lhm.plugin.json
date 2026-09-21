@@ -1,0 +1,207 @@
+{
+  "author": "qduoduo-hwh",
+  "authorUrl": "https://github.com/qduoduo-hwh",
+  "description": "MCP server for pictostl.com image-to-3D generation",
+  "homepage": "https://pictostl.com",
+  "identifier": "qduoduo-hwh-pictostl-mcp",
+  "name": "PicToSTL",
+  "prompts": [],
+  "resources": [],
+  "tags": [
+    "mcp",
+    "model-context-protocol",
+    "pictostl",
+    "image-to-3d",
+    "stl",
+    "glb"
+  ],
+  "tools": [
+    {
+      "name": "list_generation_options",
+      "description": "List pictostl.com generation options available to API clients: quality (Basic/Pro/Ultra), texture, single vs multi-view rules, and credit costs.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "upload_image",
+      "description": "Upload a local image file or HTTPS URL and return an assetId for generate_model. Do not pass this id to download_model or get_task.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Local filesystem path to an image file"
+          },
+          "url": {
+            "type": "string",
+            "description": "HTTPS URL of an image"
+          }
+        },
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "generate_model",
+      "description": "Start an async image-to-3D job on pictostl.com. Requires imageAssetIds from upload_image. If you omit clientRequestId the server call still sends one — reuse that value to retry the same job without a second charge. Poll with get_task using the returned task id.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "imageAssetIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "Asset IDs returned by upload_image"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "single",
+              "multi"
+            ]
+          },
+          "quality": {
+            "type": "string",
+            "enum": [
+              "Basic",
+              "Pro",
+              "Ultra"
+            ]
+          },
+          "texture": {
+            "type": "string",
+            "enum": [
+              "None",
+              "Standard",
+              "HD"
+            ]
+          },
+          "views": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "Front",
+                "Left",
+                "Back",
+                "Right"
+              ]
+            },
+            "description": "Required for Pro/Ultra multi-view; must include Front"
+          },
+          "clientRequestId": {
+            "type": "string",
+            "description": "UUID for idempotent retries; generated when omitted"
+          }
+        },
+        "required": [
+          "imageAssetIds",
+          "mode",
+          "quality",
+          "texture"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_task",
+      "description": "Fetch a generation by task id (not an upload assetId). Optional waitSeconds (max 60) polls until completed or failed. Jobs often take longer than 60 seconds — call again with the same id until it is completed or failed.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Task id from generate_model"
+          },
+          "waitSeconds": {
+            "type": "number",
+            "description": "Seconds to poll for a terminal status (max 60)"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "list_my_generations",
+      "description": "List recent 3D generations for this API key's user.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "get_account",
+      "description": "Show remaining credits and whether Pro / Ultra can be paid with non-trial credits.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    },
+    {
+      "name": "download_model",
+      "description": "Download a completed generation to a local path. id is the task id from generate_model/get_task, not an upload assetId. format stl (default) converts the original GLB locally to binary STL with longest edge 100 mm (no color/texture). format glb writes the original file. Parent directory must already exist.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Task id from generate_model or get_task"
+          },
+          "path": {
+            "type": "string",
+            "description": "Local destination path"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "glb",
+              "stl"
+            ],
+            "description": "Default stl"
+          },
+          "longestEdgeMm": {
+            "type": "number",
+            "description": "STL only; default 100; range 1–1000"
+          }
+        },
+        "required": [
+          "id",
+          "path"
+        ],
+        "additionalProperties": false,
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      }
+    }
+  ],
+  "version": "0.1.0"
+}

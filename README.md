@@ -4,7 +4,7 @@ Local stdio MCP server for [pictostl.com](https://pictostl.com). Generation runs
 
 Results are AI-reconstructed meshes for visualization and 3D printing experiments. They are not engineering drawings.
 
-This package is a **local stdio** MCP client (`npx -y pictostl-mcp`). pictostl.com does not host a remote MCP HTTP endpoint.
+This is a **local stdio** MCP server distributed from its GitHub repository. pictostl.com does not host a remote MCP HTTP endpoint.
 
 ## Architecture and data flow
 
@@ -28,6 +28,10 @@ By using the API or this MCP server you agree to the [Terms of Service](https://
 
 Website browser generation is separate from MCP. MCP always uses an API key.
 
+## Install from GitHub
+
+Requires Node.js 20 or newer. The command below installs the repository through npm's Git support and builds the TypeScript server locally during installation. It does not require a published npm package.
+
 ## Claude / Cursor config
 
 ```json
@@ -35,7 +39,11 @@ Website browser generation is separate from MCP. MCP always uses an API key.
   "mcpServers": {
     "pictostl": {
       "command": "npx",
-      "args": ["-y", "pictostl-mcp"],
+      "args": [
+        "-y",
+        "--package=github:qduoduo-hwh/pictostl-mcp",
+        "pictostl-mcp"
+      ],
       "env": {
         "PICTOSTL_API_KEY": "ps_live_..."
       }
@@ -50,7 +58,19 @@ Optional: `PICTOSTL_API_BASE` (default `https://pictostl.com`) for a local websi
 
 Keep the API key in your MCP client's secret or user-level configuration. Do not commit a live key to source control.
 
-`npx -y pictostl-mcp` works after this package is published to npm.
+For a pinned installation, append a Git tag or commit after the repository name, for example `github:qduoduo-hwh/pictostl-mcp#v0.1.0`.
+
+### Local development
+
+```bash
+git clone https://github.com/qduoduo-hwh/pictostl-mcp.git
+cd pictostl-mcp
+corepack enable
+pnpm install --frozen-lockfile
+pnpm build
+```
+
+Then configure the MCP client to run `node` with the absolute path to `dist/index.js` as its first argument.
 
 ## Tools
 
