@@ -1,6 +1,7 @@
 {
   "name": "pictostl-mcp",
   "version": "0.1.0",
+  "mcpName": "io.github.qduoduo-hwh/pictostl-mcp",
   "description": "MCP server for pictostl.com image-to-3D generation",
   "homepage": "https://pictostl.com",
   "repository": {

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.qduoduo-hwh/pictostl-mcp",
+  "description": "MCP server for pictostl.com image-to-3D generation",
+  "title": "PicToSTL",
+  "websiteUrl": "https://pictostl.com",
+  "repository": {
+    "url": "https://github.com/qduoduo-hwh/pictostl-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "pictostl-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "PICTOSTL_API_KEY",
+          "description": "PicToSTL API key. Create one at https://pictostl.com/api-keys",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "PICTOSTL_API_BASE",
+          "description": "Optional override for the PicToSTL API base URL",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}
